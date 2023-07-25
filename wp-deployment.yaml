@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+  labels:
+    app: wp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wp
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wp
+    spec:
+      containers:
+      - image: wordpress:latest
+        name: wordpress
+        imagePullPolicy: Always
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wpdatabase
+      
+        - name: WORDPRESS_DB_PASSWORD
+          value: Kk12345
+
+        - name: WORDPRESS_DB_USER
+          value: clarusway
+
+        - name: WORDPRESS_DB_NAME
+          value: claruswaywp
+        ports:
+        - containerPort: 80
+          name: wordpress
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: wp-pv-claim
